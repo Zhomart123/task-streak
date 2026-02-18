@@ -1,6 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Dashboard } from "./components/Dashboard";
+import { DailyReviewModal } from "./components/DailyReviewModal";
+import { DailyReviewPanel } from "./components/DailyReviewPanel";
 import { TaskFormModal } from "./components/TaskFormModal";
 import { TaskHistory } from "./components/TaskHistory";
 import { TaskList } from "./components/TaskList";
@@ -17,6 +19,12 @@ const priorityWeight: Record<Priority, number> = {
   Medium: 2,
   High: 3
 };
+
+// git add .
+// git commit -m "Add task history section"
+// git push origin main
+// npm run deploy
+
 
 const compareByCreatedAt = (a: Task, b: Task): number => {
   return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -52,11 +60,12 @@ const createToastId = (): string => {
 };
 
 const App = (): JSX.Element => {
-  const { state, addTask, updateTask, deleteTask, toggleTaskDone, setTheme } = useTaskContext();
+  const { state, addTask, updateTask, deleteTask, toggleTaskDone, saveDailyReview, setTheme } = useTaskContext();
   const [statusFilter, setStatusFilter] = useState<TaskStatusFilter>("all");
   const [sortBy, setSortBy] = useState<TaskSortBy>("deadline");
   const [query, setQuery] = useState("");
   const [isTaskModalOpen, setTaskModalOpen] = useState(false);
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
   const [deletingTask, setDeletingTask] = useState<Task | null>(null);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
@@ -75,6 +84,7 @@ const App = (): JSX.Element => {
   }, []);
 
   const todayKey = getTodayKey();
+  const todayReview = state.reviews.find((review) => review.date === todayKey) ?? null;
   const completedToday = state.streak.dailyCompletions[todayKey] ?? 0;
   const completed7Days = getCompletionsForLastDays(state.streak.dailyCompletions, 7, todayKey);
   const activeCount = state.tasks.filter((task) => !task.done).length;
@@ -135,7 +145,7 @@ const App = (): JSX.Element => {
   const handleToggleDone = (task: Task) => {
     toggleTaskDone(task.id);
     if (task.done) {
-      pushToast("Задача снова в active", "info");
+      pushToast("Задача снова активна", "info");
     } else {
       pushToast("Задача выполнена. Streak обновлен!", "success");
     }
@@ -158,6 +168,26 @@ const App = (): JSX.Element => {
     setTheme(state.settings.theme === "dark" ? "light" : "dark");
   };
 
+  const openReviewModal = () => {
+    setReviewModalOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setReviewModalOpen(false);
+  };
+
+  const handleReviewSubmit = (input: {
+    date: string;
+    wins: string;
+    blockers: string;
+    nextFocus: string;
+  }) => {
+    const hadTodayReview = Boolean(todayReview);
+    saveDailyReview(input);
+    pushToast(hadTodayReview ? "Ежедневный обзор обновлен" : "Ежедневный обзор сохранен", "info");
+    closeReviewModal();
+  };
+
   return (
     <>
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -169,7 +199,7 @@ const App = (): JSX.Element => {
         <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <div className="animate-fadeIn">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-300">
-              Productive Habit Tracker
+              Трекер Продуктивных Привычек
             </p>
             <h1 className="mt-1 font-display text-3xl font-bold sm:text-4xl">TaskStreak</h1>
             <p className="mt-1 text-sm muted-text">
@@ -179,9 +209,16 @@ const App = (): JSX.Element => {
 
           <div className="flex items-center gap-3">
             <div className="surface-panel px-4 py-2 text-right">
-              <p className="text-xs uppercase tracking-wide muted-text">Last completed date</p>
+              <p className="text-xs uppercase tracking-wide muted-text">Дата последнего выполнения</p>
               <p className="mt-0.5 text-sm font-semibold">{state.streak.lastDate ?? "еще нет"}</p>
             </div>
+            <button
+              type="button"
+              onClick={openReviewModal}
+              className="surface-panel px-4 py-2 text-sm font-semibold transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              {todayReview ? "Редактировать обзор" : "Завершить день"}
+            </button>
             <ThemeToggle theme={state.settings.theme} onToggle={toggleTheme} />
           </div>
         </header>
@@ -194,6 +231,8 @@ const App = (): JSX.Element => {
           activeCount={activeCount}
           doneCount={doneCount}
         />
+
+        <DailyReviewPanel reviews={state.reviews} todayKey={todayKey} onOpenReview={openReviewModal} />
 
         <TaskToolbar
           query={query}
@@ -214,6 +253,14 @@ const App = (): JSX.Element => {
 
         <TaskHistory tasks={state.tasks} />
       </main>
+
+      <DailyReviewModal
+        isOpen={isReviewModalOpen}
+        dateKey={todayKey}
+        existingReview={todayReview}
+        onClose={closeReviewModal}
+        onSubmit={handleReviewSubmit}
+      />
 
       <TaskFormModal
         isOpen={isTaskModalOpen}

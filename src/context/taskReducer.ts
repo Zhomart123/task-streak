@@ -1,4 +1,4 @@
-import type { AppState, Task, ThemeMode } from "../types";
+import type { AppState, DailyReview, Task, ThemeMode } from "../types";
 import { toDateKeyFromISO } from "../utils/date";
 import { deriveStreak, incrementDailyCompletions } from "../utils/streak";
 
@@ -7,6 +7,7 @@ export type TaskAction =
   | { type: "UPDATE_TASK"; id: string; updates: Partial<Omit<Task, "id" | "createdAt">> }
   | { type: "DELETE_TASK"; id: string }
   | { type: "TOGGLE_TASK_DONE"; id: string }
+  | { type: "UPSERT_DAILY_REVIEW"; review: DailyReview }
   | { type: "SET_THEME"; theme: ThemeMode };
 
 const refreshStreak = (state: AppState): AppState => {
@@ -89,6 +90,24 @@ export const taskReducer = (state: AppState, action: TaskAction): AppState => {
           };
         }),
         streak: nextStreak
+      };
+    }
+
+    case "UPSERT_DAILY_REVIEW": {
+      const existingIndex = state.reviews.findIndex((review) => review.date === action.review.date);
+      let nextReviews = [...state.reviews];
+
+      if (existingIndex >= 0) {
+        nextReviews[existingIndex] = action.review;
+      } else {
+        nextReviews.unshift(action.review);
+      }
+
+      nextReviews = nextReviews.sort((left, right) => right.date.localeCompare(left.date));
+
+      return {
+        ...state,
+        reviews: nextReviews
       };
     }
 

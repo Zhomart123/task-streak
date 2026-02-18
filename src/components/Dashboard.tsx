@@ -29,7 +29,7 @@ export const Dashboard = ({
     <section className="mb-6 grid gap-4 lg:grid-cols-[1.6fr_1fr_1fr_1fr]">
       <article className="surface-strong animate-slideUp p-5">
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-brand-700 dark:text-brand-200">
-          Win Streak
+          Текущий Streak
         </p>
         <div className="flex items-end gap-3">
           <span className="font-display text-5xl font-bold leading-none">{currentStreak}</span>
@@ -37,11 +37,11 @@ export const Dashboard = ({
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div className="rounded-xl bg-brand-50 px-3 py-2 dark:bg-brand-900/40">
-            <p className="text-xs uppercase tracking-wide text-brand-700 dark:text-brand-200">Best</p>
+            <p className="text-xs uppercase tracking-wide text-brand-700 dark:text-brand-200">Лучший</p>
             <p className="mt-1 font-semibold">{bestStreak}</p>
           </div>
           <div className="rounded-xl bg-brand-50 px-3 py-2 dark:bg-brand-900/40">
-            <p className="text-xs uppercase tracking-wide text-brand-700 dark:text-brand-200">Today</p>
+            <p className="text-xs uppercase tracking-wide text-brand-700 dark:text-brand-200">Сегодня</p>
             <p className="mt-1 font-semibold">{completedToday} задач</p>
           </div>
         </div>

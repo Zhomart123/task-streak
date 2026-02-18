@@ -186,9 +186,9 @@ export const TaskFormModal = ({
                   onChange={(event) => setPriority(event.target.value as Task["priority"])}
                   className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm transition focus:border-brand-500 dark:border-slate-700 dark:bg-slate-900"
                 >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
+                  <option value="Low">Низкий</option>
+                  <option value="Medium">Средний</option>
+                  <option value="High">Высокий</option>
                 </select>
               </label>
             </div>
@@ -199,7 +199,7 @@ export const TaskFormModal = ({
                 value={tagsRaw}
                 onChange={(event) => setTagsRaw(event.target.value)}
                 className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm transition focus:border-brand-500 dark:border-slate-700 dark:bg-slate-900"
-                placeholder="work, focus, health"
+                placeholder="работа, фокус, здоровье"
               />
             </label>
 

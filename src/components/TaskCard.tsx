@@ -15,6 +15,12 @@ const priorityClassMap: Record<Task["priority"], string> = {
   High: "bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-100"
 };
 
+const priorityLabelMap: Record<Task["priority"], string> = {
+  Low: "Низкий",
+  Medium: "Средний",
+  High: "Высокий"
+};
+
 const deadlineToneClasses = {
   neutral: "text-slate-600 dark:text-slate-300",
   warning: "text-amber-700 dark:text-amber-300",
@@ -43,13 +49,11 @@ export const TaskCard = ({ task, onToggleDone, onEdit, onDelete }: TaskCardProps
           >
             {task.title}
           </h3>
-          {task.description ? (
-            <p className="mt-1 line-clamp-2 text-sm muted-text">{task.description}</p>
-          ) : null}
+          {task.description ? <p className="mt-1 line-clamp-2 text-sm muted-text">{task.description}</p> : null}
         </div>
 
         <span className={clsx("rounded-full px-2.5 py-1 text-xs font-semibold", priorityClassMap[task.priority])}>
-          {task.priority}
+          {priorityLabelMap[task.priority]}
         </span>
       </header>
 
@@ -81,7 +85,7 @@ export const TaskCard = ({ task, onToggleDone, onEdit, onDelete }: TaskCardProps
               : "bg-brand-500 text-white hover:bg-brand-600"
           )}
         >
-          {task.done ? "Вернуть в active" : "Done"}
+          {task.done ? "Вернуть в активные" : "Выполнить"}
         </button>
 
         <div className="flex items-center gap-2">
@@ -90,14 +94,14 @@ export const TaskCard = ({ task, onToggleDone, onEdit, onDelete }: TaskCardProps
             onClick={() => onEdit(task)}
             className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-brand-400 hover:text-brand-700 dark:border-slate-600 dark:text-slate-200 dark:hover:border-brand-500 dark:hover:text-brand-300"
           >
-            Edit
+            Редактировать
           </button>
           <button
             type="button"
             onClick={() => onDelete(task)}
             className="rounded-lg border border-rose-300 px-3 py-1.5 text-sm font-medium text-rose-700 transition hover:bg-rose-50 dark:border-rose-800 dark:text-rose-300 dark:hover:bg-rose-900/30"
           >
-            Delete
+            Удалить
           </button>
         </div>
       </footer>

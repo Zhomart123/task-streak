@@ -10,6 +10,7 @@ export const createDefaultState = (theme: ThemeMode): AppState => {
       lastDate: null,
       dailyCompletions: {}
     },
+    reviews: [],
     settings: {
       theme
     }

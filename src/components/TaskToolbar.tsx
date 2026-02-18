@@ -12,8 +12,8 @@ interface TaskToolbarProps {
 
 const statusOptions: Array<{ value: TaskStatusFilter; label: string }> = [
   { value: "all", label: "Все" },
-  { value: "active", label: "Active" },
-  { value: "done", label: "Done" }
+  { value: "active", label: "Активные" },
+  { value: "done", label: "Выполненные" }
 ];
 
 export const TaskToolbar = ({
@@ -44,7 +44,7 @@ export const TaskToolbar = ({
           onClick={onAddTask}
           className="inline-flex items-center justify-center rounded-xl bg-brand-500 px-4 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-brand-600 active:translate-y-0"
         >
-          + Add task
+          + Добавить задачу
         </button>
       </div>
 
@@ -71,15 +71,15 @@ export const TaskToolbar = ({
         </div>
 
         <label className="inline-flex items-center gap-2 text-sm font-medium muted-text">
-          Sort:
+          Сортировка:
           <select
             value={sortBy}
             onChange={(event) => onSortChange(event.target.value as TaskSortBy)}
             className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-slate-900 shadow-sm transition hover:border-brand-300 focus:border-brand-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
           >
-            <option value="deadline">Deadline</option>
-            <option value="priority">Priority</option>
-            <option value="createdAt">Created date</option>
+            <option value="deadline">Дедлайн</option>
+            <option value="priority">Приоритет</option>
+            <option value="createdAt">Дата создания</option>
           </select>
         </label>
       </div>

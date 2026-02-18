@@ -1,10 +1,10 @@
 import { createDefaultState } from "../context/defaultState";
-import type { AppState, Priority, Task, ThemeMode } from "../types";
+import type { AppState, DailyReview, Priority, Task, ThemeMode } from "../types";
 import { getTodayKey, isValidDateKey, toDateKeyFromISO } from "./date";
 import { deriveStreak, normalizeDailyCompletions } from "./streak";
 
 const STORAGE_KEY = "taskstreak_state";
-const STORAGE_VERSION = 2;
+const STORAGE_VERSION = 3;
 
 interface PersistedEnvelope {
   version: number;
@@ -81,6 +81,34 @@ const sanitizeTask = (value: unknown, index: number): Task | null => {
   };
 };
 
+const buildReviewId = (index: number): string => {
+  return `review-${Date.now()}-${index}-${Math.random().toString(16).slice(2, 8)}`;
+};
+
+const sanitizeReview = (value: unknown, index: number): DailyReview | null => {
+  if (!isObject(value)) {
+    return null;
+  }
+
+  const date = typeof value.date === "string" && isValidDateKey(value.date) ? value.date : null;
+  if (!date) {
+    return null;
+  }
+
+  const createdAt = isIsoLike(value.createdAt) ? value.createdAt : new Date().toISOString();
+  const updatedAt = isIsoLike(value.updatedAt) ? value.updatedAt : createdAt;
+
+  return {
+    id: typeof value.id === "string" && value.id ? value.id : buildReviewId(index),
+    date,
+    wins: typeof value.wins === "string" ? value.wins.trim() : "",
+    blockers: typeof value.blockers === "string" ? value.blockers.trim() : "",
+    nextFocus: typeof value.nextFocus === "string" ? value.nextFocus.trim() : "",
+    createdAt,
+    updatedAt
+  };
+};
+
 const deriveDailyCompletionsFromTasks = (tasks: Task[]): Record<string, number> => {
   const dailyCompletions: Record<string, number> = {};
 
@@ -123,6 +151,29 @@ const migrateUnknownState = (unknownState: unknown, fallbackTheme: ThemeMode): A
   const settingsRaw = isObject(unknownState.settings) ? unknownState.settings : {};
   const theme = sanitizeTheme(settingsRaw.theme, fallbackTheme);
 
+  const reviewsRaw = Array.isArray(unknownState.reviews) ? unknownState.reviews : [];
+  const reviewsByDate = new Map<string, DailyReview>();
+  for (const [index, reviewRaw] of reviewsRaw.entries()) {
+    const review = sanitizeReview(reviewRaw, index);
+    if (!review) {
+      continue;
+    }
+
+    const existing = reviewsByDate.get(review.date);
+    if (!existing) {
+      reviewsByDate.set(review.date, review);
+      continue;
+    }
+
+    const existingTime = new Date(existing.updatedAt).getTime();
+    const currentTime = new Date(review.updatedAt).getTime();
+    if (currentTime >= existingTime) {
+      reviewsByDate.set(review.date, review);
+    }
+  }
+
+  const reviews = [...reviewsByDate.values()].sort((left, right) => right.date.localeCompare(left.date));
+
   return {
     tasks,
     streak: deriveStreak(
@@ -133,6 +184,7 @@ const migrateUnknownState = (unknownState: unknown, fallbackTheme: ThemeMode): A
       },
       getTodayKey()
     ),
+    reviews,
     settings: {
       theme
     }

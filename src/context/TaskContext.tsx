@@ -6,7 +6,13 @@ import {
   useReducer,
   type PropsWithChildren
 } from "react";
-import type { AppState, CreateTaskInput, ThemeMode, UpdateTaskInput } from "../types";
+import type {
+  AppState,
+  CreateTaskInput,
+  SaveDailyReviewInput,
+  ThemeMode,
+  UpdateTaskInput
+} from "../types";
 import { loadAppState, saveAppState, applyThemeClass } from "../utils/storage";
 import { taskReducer } from "./taskReducer";
 
@@ -16,6 +22,7 @@ interface TaskContextValue {
   updateTask: (id: string, input: UpdateTaskInput) => void;
   deleteTask: (id: string) => void;
   toggleTaskDone: (id: string) => void;
+  saveDailyReview: (input: SaveDailyReviewInput) => void;
   setTheme: (theme: ThemeMode) => void;
 }
 
@@ -85,6 +92,27 @@ export const TaskProvider = ({ children }: PropsWithChildren): JSX.Element => {
     dispatch({ type: "TOGGLE_TASK_DONE", id });
   }, []);
 
+  const saveDailyReview = useCallback(
+    (input: SaveDailyReviewInput) => {
+      const now = new Date().toISOString();
+      const existing = state.reviews.find((review) => review.date === input.date);
+
+      dispatch({
+        type: "UPSERT_DAILY_REVIEW",
+        review: {
+          id: existing?.id ?? buildId(),
+          date: input.date,
+          wins: input.wins.trim(),
+          blockers: input.blockers.trim(),
+          nextFocus: input.nextFocus.trim(),
+          createdAt: existing?.createdAt ?? now,
+          updatedAt: now
+        }
+      });
+    },
+    [state.reviews]
+  );
+
   const setTheme = useCallback((theme: ThemeMode) => {
     dispatch({ type: "SET_THEME", theme });
   }, []);
@@ -96,9 +124,10 @@ export const TaskProvider = ({ children }: PropsWithChildren): JSX.Element => {
       updateTask,
       deleteTask,
       toggleTaskDone,
+      saveDailyReview,
       setTheme
     }),
-    [state, addTask, updateTask, deleteTask, toggleTaskDone, setTheme]
+    [state, addTask, updateTask, deleteTask, toggleTaskDone, saveDailyReview, setTheme]
   );
 
   return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;

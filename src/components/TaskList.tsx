@@ -14,7 +14,7 @@ export const TaskList = ({ tasks, onToggleDone, onEdit, onDelete }: TaskListProp
       <section className="surface-panel animate-fadeIn p-10 text-center">
         <h3 className="font-display text-2xl font-semibold">Пока пусто</h3>
         <p className="mt-2 muted-text">
-          Добавь первую задачу через кнопку <strong>+ Add task</strong> и начни новый streak.
+          Добавь первую задачу через кнопку <strong>+ Добавить задачу</strong> и начни новый streak.
         </p>
       </section>
     );

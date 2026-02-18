@@ -12,6 +12,12 @@ const priorityClassMap: Record<Task["priority"], string> = {
   High: "bg-accent-100 text-accent-800 dark:bg-accent-900/40 dark:text-accent-100"
 };
 
+const priorityLabelMap: Record<Task["priority"], string> = {
+  Low: "Низкий",
+  Medium: "Средний",
+  High: "Высокий"
+};
+
 export const TaskHistory = ({ tasks }: TaskHistoryProps): JSX.Element => {
   const completedTasks = [...tasks]
     .filter((task) => Boolean(task.completedAt))
@@ -24,9 +30,9 @@ export const TaskHistory = ({ tasks }: TaskHistoryProps): JSX.Element => {
   if (completedTasks.length === 0) {
     return (
       <section className="surface-panel animate-fadeIn p-6">
-        <h2 className="font-display text-xl font-semibold">Task History</h2>
+        <h2 className="font-display text-xl font-semibold">История задач</h2>
         <p className="mt-2 text-sm muted-text">
-          Completed tasks will appear here with the exact completion date and time.
+          Здесь появятся выполненные задачи с точной датой и временем завершения.
         </p>
       </section>
     );
@@ -45,16 +51,14 @@ export const TaskHistory = ({ tasks }: TaskHistoryProps): JSX.Element => {
     groupedByDate[dateKey].push(task);
   }
 
-  const dateGroups = Object.entries(groupedByDate).sort(([left], [right]) =>
-    left < right ? 1 : -1
-  );
+  const dateGroups = Object.entries(groupedByDate).sort(([left], [right]) => (left < right ? 1 : -1));
 
   return (
     <section className="surface-panel animate-slideUp p-4 [animation-delay:160ms]">
       <header className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-display text-xl font-semibold">Task History</h2>
+        <h2 className="font-display text-xl font-semibold">История задач</h2>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
-          {completedTasks.length} completed
+          Выполнено: {completedTasks.length}
         </span>
       </header>
 
@@ -63,7 +67,7 @@ export const TaskHistory = ({ tasks }: TaskHistoryProps): JSX.Element => {
           <article key={dateKey} className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
             <header className="mb-2 flex items-center justify-between gap-2">
               <h3 className="text-sm font-semibold">{formatDateKey(dateKey)}</h3>
-              <span className="text-xs muted-text">{items.length} tasks</span>
+              <span className="text-xs muted-text">{items.length} задач</span>
             </header>
 
             <ul className="grid gap-2">
@@ -84,13 +88,16 @@ export const TaskHistory = ({ tasks }: TaskHistoryProps): JSX.Element => {
 
                     <div className="flex items-center gap-2">
                       <span
-                        className={clsx("rounded-full px-2.5 py-1 text-xs font-semibold", priorityClassMap[task.priority])}
+                        className={clsx(
+                          "rounded-full px-2.5 py-1 text-xs font-semibold",
+                          priorityClassMap[task.priority]
+                        )}
                       >
-                        {task.priority}
+                        {priorityLabelMap[task.priority]}
                       </span>
                       {!task.done ? (
                         <span className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">
-                          reopened
+                          Переоткрыта
                         </span>
                       ) : null}
                     </div>

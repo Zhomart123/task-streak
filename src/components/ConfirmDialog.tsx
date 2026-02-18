@@ -10,8 +10,7 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-const focusableSelector =
-  "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])";
+const focusableSelector = "button, [href], input, select, textarea, [tabindex]:not([tabindex='-1'])";
 
 export const ConfirmDialog = ({
   isOpen,

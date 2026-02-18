@@ -28,9 +28,20 @@ export interface SettingsState {
   theme: ThemeMode;
 }
 
+export interface DailyReview {
+  id: string;
+  date: string;
+  wins: string;
+  blockers: string;
+  nextFocus: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AppState {
   tasks: Task[];
   streak: StreakState;
+  reviews: DailyReview[];
   settings: SettingsState;
 }
 
@@ -48,6 +59,13 @@ export interface UpdateTaskInput {
   priority: Priority;
   deadline: string | null;
   tags: string[];
+}
+
+export interface SaveDailyReviewInput {
+  date: string;
+  wins: string;
+  blockers: string;
+  nextFocus: string;
 }
 
 export type ToastTone = "success" | "info" | "danger";
