@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Sora:wght@500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #f7fbfa;
+  --bg-secondary: #eff8f5;
+  --text-primary: #10221e;
+}
+
+.dark {
+  --bg-primary: #07110f;
+  --bg-secondary: #0d1d1a;
+  --text-primary: #f3faf8;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    @apply font-sans antialiased text-slate-900 dark:text-slate-100;
+    background:
+      radial-gradient(1200px 600px at -20% -20%, rgba(34, 173, 145, 0.18), transparent 50%),
+      radial-gradient(900px 500px at 120% 0%, rgba(255, 104, 26, 0.16), transparent 45%),
+      linear-gradient(160deg, var(--bg-primary), var(--bg-secondary));
+    color: var(--text-primary);
+  }
+
+  ::selection {
+    @apply bg-brand-300/60 text-slate-900;
+  }
+
+  *:focus-visible {
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white dark:ring-offset-slate-950;
+  }
+}
+
+@layer components {
+  .surface-panel {
+    @apply rounded-2xl border border-white/60 bg-white/75 shadow-sm backdrop-blur-md dark:border-slate-700/70 dark:bg-slate-900/70;
+  }
+
+  .surface-strong {
+    @apply rounded-2xl border border-white/70 bg-white/90 shadow-glow backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/90;
+  }
+
+  .muted-text {
+    @apply text-slate-600 dark:text-slate-300;
+  }
+}
