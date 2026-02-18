@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { ConfirmDialog } from "./components/ConfirmDialog";
 import { Dashboard } from "./components/Dashboard";
 import { TaskFormModal } from "./components/TaskFormModal";
+import { TaskHistory } from "./components/TaskHistory";
 import { TaskList } from "./components/TaskList";
 import { TaskToolbar } from "./components/TaskToolbar";
 import { ThemeToggle } from "./components/ThemeToggle";
@@ -210,6 +211,8 @@ const App = (): JSX.Element => {
           onEdit={openEditTaskModal}
           onDelete={handleDeleteIntent}
         />
+
+        <TaskHistory tasks={state.tasks} />
       </main>
 
       <TaskFormModal

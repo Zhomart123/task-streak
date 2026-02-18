@@ -152,7 +152,7 @@ export const TaskFormModal = ({
                 value={title}
                 onChange={(event) => setTitle(event.target.value)}
                 className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm shadow-sm transition focus:border-brand-500 dark:border-slate-700 dark:bg-slate-900"
-                placeholder="Например: Подготовить weekly report"
+                placeholder="название задач"
                 required
               />
             </label>

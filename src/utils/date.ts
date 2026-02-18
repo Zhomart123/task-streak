@@ -132,3 +132,13 @@ export const formatDateKey = (dateKey: string): string => {
 
   return new Intl.DateTimeFormat("ru-RU", options).format(date);
 };
+
+export const formatDateTimeFromISO = (isoDate: string): string => {
+  const date = new Date(isoDate);
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit"
+  }).format(date);
+};
